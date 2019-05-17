@@ -1,0 +1,15 @@
+{{> nav }}
+
+<h1>Registration Form</h1>
+
+<form  action="/register" method="post">
+    <input class="register" name="first" type="text" placeholder="i.e. Otto">
+    <input class="register" name="last" type="text" placeholder="i.e. Sakamoto">
+    <input class="register" name="email" type="email" placeholder="i.e. you@mail.com">
+    <input class="register" name="password" type="password" placeholder="password">
+    <!-- keep button with type submit, or just empty -->
+    <button type="submit">Sign Up</button>
+
+    <p>If you already are a member please <a href="/login">login</a></p>
+
+</form>

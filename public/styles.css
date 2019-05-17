@@ -1,0 +1,30 @@
+* {
+    background: plum;
+}
+
+.field {
+    display: block;
+}
+
+.register {
+    display: block;
+}
+
+.profile {
+    display: block;
+}
+
+#button {
+    display: block;
+}
+
+#canvas {
+    border: 5px solid red;
+    background: white;
+    display: block;
+}
+
+#penguin {
+    width: 640px;
+    height: 360px;
+}

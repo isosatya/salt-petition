@@ -1,0 +1,19 @@
+{{> nav }}
+
+<h3>THIS IS THE SIGNERS PAGE</h3>
+
+<ol>
+    {{#signers}}
+    <li>
+        {{#if homepage}}
+            <a href="{{this.homepage}}">{{this.first}} {{this.last}}</a>
+        {{else}}
+            <a>{{this.first}} {{this.last}}</a>
+        {{/if}}
+    </li>
+
+        <a>{{this.age}}</a>
+
+
+    {{/signers}}
+</ol>

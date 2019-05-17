@@ -1,0 +1,26 @@
+{{> nav }}
+
+<h1>THIS IS THE PETITION PAGE</h1>
+
+<form class="petition" action="/petition" method="post">
+
+    <!-- <input type="text" name="first" value="" class="field" placeholder="i.e. Otto" required>
+    <input type="text" name="last" value="" class="field" placeholder="i.e. Müller" required> -->
+    <input type="hidden" name="signature" value="" id="signature">
+
+    <!-- *** this is included to protect the inclusion of external malicious cookies *** -->
+    <!-- <input type="hidden" name="_csrf" value="{{crfsToken}}"> -->
+
+
+    <button name="button" type="submit" id="submit">Submit</button>
+</form>
+
+<canvas id="canvas" width="600" height="150"></canvas>
+
+<button name="refresh" type="button" id="refresh">Retry Signature</button>
+
+<p id="warning"></p>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="/script.js"></script>
