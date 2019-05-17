@@ -2,7 +2,11 @@
 
 const spicedPg = require("spiced-pg");
 
-var db = spicedPg("postgres:postgres:postgres@localhost:5432/salt-petition");
+const dbUrl =
+    process.env.DATABASE_URL ||
+    `postgres:postgres:postgres@localhost:5432/salt-petition`;
+
+var db = spicedPg(dbUrl);
 
 // database queries
 
@@ -41,7 +45,7 @@ module.exports.login = function login(logEmail) {
 
 module.exports.viewSignature = function viewSignature(id) {
     return db.query(
-        `SELECT id, signature FROM signatures WHERE usersid = $1;`,
+        `SELECT usersid, signature FROM signatures WHERE usersid = $1;`,
         [id]
     );
 };
@@ -53,6 +57,21 @@ module.exports.addProfile = function addProfile(usersId, age, city, homepage) {
         VALUES ($1, $2, $3, $4);
     `,
         [usersId, age, city, homepage]
+    );
+};
+
+module.exports.editProfile = function editProfile(id) {
+    return (
+        db.query(`
+        SELECT users.id, users.first, users.last, profiles.usersid, profiles.age, profiles.city, profiles.homepage, signatures.usersid
+        FROM users
+        INNER JOIN profiles
+            ON users.id = profiles.usersid
+        INNER JOIN signatures
+            ON users.id = signatures.usersid
+        WHERE users.id = $1
+        `),
+        [id]
     );
 };
 

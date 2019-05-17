@@ -41,4 +41,6 @@
         sign = 0;
         context.clearRect(0, 0, canvas.width(), canvas.height());
     });
+
+    document.getElementById("first").value = "testing name value";
 })();

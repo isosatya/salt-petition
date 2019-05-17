@@ -91,6 +91,11 @@ app.post("/login", (req, res) => {
                         // );
                         db.viewSignature(match.rows[0].id).then(results => {
                             req.session.signatureId = results.rows[0].id;
+
+                            console.log(
+                                "I HAVE ASSIGNED THE req.session.signatureId = results.rows[0].id;",
+                                req.session.signatureId
+                            );
                             var imgUrl = results.rows[0].signature;
                             res.render("signed", {
                                 layout: "main",
@@ -127,7 +132,11 @@ app.post("/login", (req, res) => {
 app.get("/petition", (req, res) => {
     if (req.session.signatureId) {
         db.viewSignature(req.session.signatureId).then(results => {
-            console.log("results at line 130 viewSignature", results.rows);
+            console.log(
+                "VALUE FOR req.session.signatureId",
+                req.session.signatureId
+            );
+            // console.log("results at line 130 viewSignature", results.rows);
 
             var imgUrl = results.rows[0].signature;
 
@@ -175,6 +184,20 @@ app.post("/profile", (req, res) => {
     // });
 });
 
+app.get("/profile/edit", (req, res) => {
+    console.log("req.session.signatureId", req.session.signatureId);
+    if (req.session.signatureId) {
+        db.editProfile(req.session.signatureId).then(results => {
+            console.log("Profile edit information", results.rows);
+
+            // res.render("profileedit", {
+            //     layout: "main",
+            //     profile: results.rows
+            // });
+        });
+    }
+});
+
 app.get("/petition/signed", (req, res) => {
     if (req.session.signatureId) {
         db.viewSignature(req.session.signatureId).then(results => {
@@ -219,15 +242,15 @@ app.get("/petition/signers", (req, res) => {
 });
 
 app.get("/petition/signers/:city", (req, res) => {
-    console.log("parameters of the request by city page", req.params);
+    // console.log("parameters of the request by city page", req.params);
     const city = req.params.city;
 
     db.viewByCity(city).then(results => {
-        console.log("results from rows query   ", results.rows);
-        res.render("signers", {
+        // console.log("results from rows query   ", results.rows);
+        res.render("signersByCity", {
             layout: "main",
+            city,
             signers: results.rows
-            // city: "true"
         });
     });
 });
@@ -241,7 +264,7 @@ app.get("/logout", (req, res) => {
     res.redirect("/register");
 });
 
-app.listen(8080, () => console.log("Im listening!!"));
+app.listen(process.env.PORT || 8080, () => console.log("Im listening!!"));
 
 /*
 //POST route, because the query is modifying the database, and queries that modify
@@ -292,3 +315,21 @@ app.post("/add-city", (req, res) => {
 // dbgetSignersByCity(city).then() --> query with WHERE city = $1 --> city name
 // in this query we have to make sure the capitalizatino is taken care of
 // WHERE LOWER(city) = LOWER($1)
+
+/////////////-----------------> PART 5 - UPSERTING
+// promise.all([
+//     db.updateuser(req.session.userId, req.body)
+//     db.upsertuserprofile(req.session.userId, req.body)
+//         ]).then(function() {})
+//
+//     db.updateuser(req.session.userId, req.body).then( () => db.upsertuserprofile(req.session.userId, req.body))
+//         .then(function() {})
+//
+//
+// for deleting the signature
+// FORM METHOD = "POST" action="signature/delete" --> sending them to petition makes no sense (?)
+//     input name "_csrf"
+//     button Delete Signature
+//
+//
+// for deleting the user, it has to be done in the right order (not users first, for example)
