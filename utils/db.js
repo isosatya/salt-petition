@@ -1,6 +1,11 @@
 // spicedPg setup
 
 const spicedPg = require("spiced-pg");
+let secrets;
+
+process.env.NODE_ENV === "production"
+    ? (secrets = process.env)
+    : (secrets = require(`./secrets.json`));
 
 const dbUrl =
     process.env.DATABASE_URL ||
