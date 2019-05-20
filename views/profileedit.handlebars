@@ -1,27 +1,31 @@
+{{> nav }}
 
 <h4>Edit your profile</h4>
 
 <form  action="/profile/edit" method="post">
+    {{#profile}}
+    <input type="hidden" name="usersid" value="{{this.id}}">
 
-    <input class="editprofile" name="first" id="first" type="text">First Name</input>
+    <input class="editprofile" name="first" id="first" type="text" value="{{this.first}}">First Name</input>
 
-    <input class="editprofile" name="last" type="text">Last Name</input>
+    <input class="editprofile" name="last" type="text" value="{{this.last}}">Last Name</input>
 
-    <input class="editprofile" name="email" type="email">e-mail</input>
+    <input class="editprofile" name="email" type="email" value="{{this.email}}">e-mail</input>
 
     <input class="editprofile" name="password" type="password">Password</input>
 
-    <input class="editprofile" name="age" type="number">Number</input>
+    <input class="editprofile" name="age" id="age" type="number" value="{{this.age}}">Age</input>
 
-    <input class="editprofile" name="city" type="text">City</input>
+    <input class="editprofile" name="city" type="text" value="{{this.city}}">City</input>
 
-    <input class="editprofile" name="homepage" type="url">Homepage</input>
+    <input class="editprofile" name="homepage" id="homepage" type="text" value="{{this.homepage}}">Homepage</input>
+    {{/profile}}
 
-
-    <button type="submit" class="editprofile">Submit</button>
+    <button type="submit" id="submitprofile" class="editprofile">Submit</button>
 
 
 
 </form>
 
-<script src="/script.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="/script2.js"></script>

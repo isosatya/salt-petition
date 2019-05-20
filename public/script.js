@@ -42,5 +42,9 @@
         context.clearRect(0, 0, canvas.width(), canvas.height());
     });
 
-    document.getElementById("first").value = "testing name value";
+    // var submitButton = document.getElementById("submitprofile");
+    // console.log(submitButton);
+    // submitButton.on("click", function() {
+    //     console.log("I PRESSED SUBMIT BUTTON");
+    // });
 })();

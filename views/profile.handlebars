@@ -2,10 +2,13 @@
 <h4>Pleae tell us more about yourself</h4>
 
 <form  action="/profile" method="post">
-    <input class="profile" name="age" type="number" placeholder="i.e. 33">
+    <input class="profile" name="age" id="age" type="number" placeholder="i.e. 33">
     <input class="profile" name="city" type="text" placeholder="i.e. Hamburg">
-    <input class="profile" name="homepage" type="url" placeholder="url">
+    <input class="profile" name="homepage" id="homepage" type="text" placeholder="url">
 
-    <button type="submit">Submit</button>
+    <button type="submit" id="submitprofile">Submit</button>
 
 </form>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="/script2.js"></script>

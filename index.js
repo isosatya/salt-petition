@@ -48,9 +48,13 @@ app.get("/cookie-test", (req, res) => {
 */
 
 app.get("/register", (req, res) => {
-    res.render("register", {
-        layout: "main"
-    });
+    if (req.session.usersId) {
+        res.redirect("/petition/signed");
+    } else {
+        res.render("register", {
+            layout: "main"
+        });
+    }
 });
 
 app.post("/register", (req, res) => {
@@ -61,10 +65,23 @@ app.post("/register", (req, res) => {
     var password = req.body.password;
 
     bc.hashPassword(password).then(hash => {
-        db.addUsers(firstName, lastName, email, hash).then(results => {
-            req.session.usersId = results.rows[0].id;
-            res.redirect("/petition");
-        });
+        db.addUsers(firstName, lastName, email, hash)
+            .then(results => {
+                req.session.usersId = results.rows[0].id;
+                res.redirect("/petition");
+            })
+            .catch(err => {
+                if (err.code == "23505") {
+                    var text = "e-Mail already registered";
+                } else {
+                    text = err.detail;
+                }
+                res.render("register", {
+                    layout: "main",
+                    err: text
+                });
+                console.log("Error at register page -->", err);
+            });
     });
 });
 
@@ -83,25 +100,34 @@ app.post("/login", (req, res) => {
             // console.log("return from email function", match.rows[0]);
             bc.checkPassword(password, match.rows[0].password)
                 .then(doesMatch => {
+                    console.log("does match??", doesMatch);
                     if (doesMatch) {
-                        // console.log("IM HERE -->    if (doesMatch) {");
-                        // console.log(
-                        //     "logging match.rows[0].id from email function",
-                        //     match.rows[0].id
-                        // );
-                        db.viewSignature(match.rows[0].id).then(results => {
-                            req.session.signatureId = results.rows[0].id;
-
-                            console.log(
-                                "I HAVE ASSIGNED THE req.session.signatureId = results.rows[0].id;",
-                                req.session.signatureId
-                            );
-                            var imgUrl = results.rows[0].signature;
-                            res.render("signed", {
-                                layout: "main",
-                                image: imgUrl
+                        req.session.usersId = match.rows[0].id;
+                        if (req.session.usersId) {
+                            ///////////////////////////
+                            // console.log("I AM AT LINE 97");
+                            db.viewSignature(match.rows[0].id)
+                                .then(results => {
+                                    req.session.signatureId = match.rows[0].id;
+                                    var imgUrl = results.rows[0].signature;
+                                    res.render("signed", {
+                                        layout: "main",
+                                        image: imgUrl
+                                    });
+                                })
+                                .catch(err => {
+                                    console.log(
+                                        "Error at the viewSignature query",
+                                        err
+                                    );
+                                });
+                        } else {
+                            // console.log("I AM AT LINE 114");
+                            res.render("petition", {
+                                // csrfToken: req.csrfToken(),  --> dont put it here, because we put it in the middlware up there
+                                layout: "main"
                             });
-                        });
+                        }
                     } else {
                         res.render("login", {
                             layout: "main",
@@ -130,21 +156,27 @@ app.post("/login", (req, res) => {
 // 7 | Otto    | Gomez     | perinola@gmail.com | 12345 (password)
 
 app.get("/petition", (req, res) => {
+    // console.log("req.session.signatureId -->", req.session.signatureId);
+    // console.log("req.session.usersId --->", req.session.usersId);
+
     if (req.session.signatureId) {
-        db.viewSignature(req.session.signatureId).then(results => {
-            console.log(
-                "VALUE FOR req.session.signatureId",
-                req.session.signatureId
-            );
-            // console.log("results at line 130 viewSignature", results.rows);
+        db.viewSignature(req.session.signatureId)
+            .then(results => {
+                console.log(
+                    // "VALUE FOR req.session.signatureId",
+                    req.session.signatureId
+                );
 
-            var imgUrl = results.rows[0].signature;
+                var imgUrl = results.rows[0].signature;
 
-            res.render("signed", {
-                layout: "main",
-                image: imgUrl
+                res.render("signed", {
+                    layout: "main",
+                    image: imgUrl
+                });
+            })
+            .catch(err => {
+                console.log("Error at the viewSignature query", err);
             });
-        });
     } else {
         res.render("petition", {
             // csrfToken: req.csrfToken(),  --> dont put it here, because we put it in the middlware up there
@@ -157,10 +189,19 @@ app.post("/petition", (req, res) => {
     var usersId = req.session.usersId;
     var signatureUrl = req.body.signature;
 
-    db.addSignature(usersId, signatureUrl).then(results => {
-        req.session.signatureId = results.rows[0].id;
-        res.redirect("/profile");
-    });
+    db.addSignature(usersId, signatureUrl)
+        .then(() => {
+            req.session.signatureId = usersId;
+            if (req.session.action == "delete") {
+                res.redirect("/petition/signed");
+                delete req.session.action;
+            } else {
+                res.redirect("/profile");
+            }
+        })
+        .catch(err => {
+            console.log("Error at the addSignature query", err);
+        });
 });
 
 app.get("/profile", (req, res) => {
@@ -175,9 +216,15 @@ app.post("/profile", (req, res) => {
     var homepage = req.body.homepage;
     var usersId = req.session.usersId;
 
-    db.addProfile(usersId, age, city, homepage).then(() => {
-        res.redirect("/petition/signers");
-    });
+    console.log("req.session.usersId at /profile", req.session.usersId);
+
+    db.addProfile(usersId, age, city, homepage)
+        .then(() => {
+            res.redirect("/petition/signers");
+        })
+        .catch(err => {
+            console.log("Error at profile query -->", err);
+        });
 
     // res.render("profile", {
     //     layout: "main"
@@ -185,31 +232,67 @@ app.post("/profile", (req, res) => {
 });
 
 app.get("/profile/edit", (req, res) => {
-    console.log("req.session.signatureId", req.session.signatureId);
-    if (req.session.signatureId) {
-        db.editProfile(req.session.signatureId).then(results => {
-            console.log("Profile edit information", results.rows);
+    // console.log("req.session.signatureId", req.session.signature<Id);
+    // console.log(db);
+    if (req.session.usersId) {
+        db.editProfile(req.session.usersId)
+            .then(results => {
+                // console.log("Profile edit information", results.rows);
 
-            // res.render("profileedit", {
-            //     layout: "main",
-            //     profile: results.rows
-            // });
-        });
+                res.render("profileedit", {
+                    layout: "main",
+                    profile: results.rows
+                });
+            })
+            .catch(err => {
+                console.log("error -->", err);
+            });
     }
+});
+
+app.post("/profile/edit", (req, res) => {
+    console.log("req.body password-->", req.body.password);
+    bc.hashPassword(req.body.password)
+        .then(hash => {
+            console.log("req.body.password hashed", req.body.password);
+            db.updateUsers(
+                req.body.usersid,
+                req.body.first,
+                req.body.last,
+                req.body.email,
+                hash
+            );
+        })
+        .then(
+            db.updateProfile(
+                req.body.usersid,
+                req.body.age,
+                req.body.city,
+                req.body.homepage
+            )
+        )
+        .then(() => {
+            console.log("UPDATE OF PROFILE SUCCESSFULL");
+            res.redirect("/petition/signed");
+        })
+        .catch(err => {
+            console.log("encountered error", err);
+        });
 });
 
 app.get("/petition/signed", (req, res) => {
     if (req.session.signatureId) {
-        db.viewSignature(req.session.signatureId).then(results => {
-            // console.log("retrieving from the db", results.rows[0].signature);
-            var imgUrl = results.rows[0].signature;
-            // console.log(imgUrl);
-
-            res.render("signed", {
-                layout: "main",
-                image: imgUrl
+        db.viewSignature(req.session.signatureId)
+            .then(results => {
+                var imgUrl = results.rows[0].signature;
+                res.render("signed", {
+                    layout: "main",
+                    image: imgUrl
+                });
+            })
+            .catch(err => {
+                console.log("Error at the viewSignature query", err);
             });
-        });
     } else {
         res.render("signed", {
             layout: "main",
@@ -221,38 +304,102 @@ app.get("/petition/signed", (req, res) => {
 });
 
 app.post("/petition/signed", (req, res) => {
-    res.clearCookie("session");
-    res.clearCookie("session.sig");
-    res.render("signed", {
-        layout: "main",
-        image: "/penguin.jpg",
-        message: "Thanks for being cool!",
-        id: "penguin"
-    });
+    // console.log("body of the button press", req.body);
+
+    if (req.body.delete == "true") {
+        req.session.action = "delete";
+        db.deleteSignature(req.session.usersId)
+            .then(() => {
+                console.log(
+                    `Signature for user ${req.session.usersId} DELETED`
+                );
+                // res.clearCookie("session");
+                // res.clearCookie("session.sig");
+                if (req.session.signatureId) {
+                    delete req.session.signatureId;
+                }
+                res.redirect("/petition");
+            })
+            .catch(err => {
+                console.log("Error at deleteSignature query -->", err);
+            });
+    } else if (req.body.logout == "true") {
+        // req.session.action = "logout";
+        res.clearCookie("session");
+        res.clearCookie("session.sig");
+        res.render("signed", {
+            layout: "main",
+            image: "/penguin.jpg",
+            message: "Thanks for being cool!",
+            id: "penguin"
+        });
+    } else if (req.body.deleteaccount == "true") {
+        req.session.action = "delete";
+        db.deleteSignature(req.session.usersId)
+            .then(() => {
+                db.deleteProfile(req.session.usersId)
+                    .then(() => {
+                        console.log(
+                            "req.session.usersId before delete users",
+                            req.session.usersId
+                        );
+                        db.deleteUsers(req.session.usersId)
+                            .then(() => {
+                                res.clearCookie("session");
+                                res.clearCookie("session.sig");
+                                res.redirect("/register");
+                            })
+                            .catch(err =>
+                                console.log("Error at deleteUsers query", err)
+                            );
+                    })
+                    .catch(err =>
+                        console.log("Error at deleteProfile query", err)
+                    );
+            })
+            .catch(err => {
+                console.log("Error at deleteSignature query -->", err);
+            });
+    }
 });
 
+// app.post("/petition/signed", (req, res) => {
+//     res.clearCookie("session");
+//     res.clearCookie("session.sig");
+//     res.render("signed", {
+//         layout: "main",
+//         image: "/penguin.jpg",
+//         message: "Thanks for being cool!",
+//         id: "penguin"
+//     });
+// });
+
 app.get("/petition/signers", (req, res) => {
-    db.viewSigned().then(results => {
-        // console.log("signers so far ", results.rows);
-        res.render("signers", {
-            layout: "main",
-            signers: results.rows
-        });
-    });
+    db.viewSigned()
+        .then(results => {
+            // console.log("signers so far ", results.rows);
+            res.render("signers", {
+                layout: "main",
+                signers: results.rows
+            });
+        })
+        .catch(err => console.log("Error at viewSigned query -->", err));
 });
 
 app.get("/petition/signers/:city", (req, res) => {
     // console.log("parameters of the request by city page", req.params);
     const city = req.params.city;
 
-    db.viewByCity(city).then(results => {
-        // console.log("results from rows query   ", results.rows);
-        res.render("signersByCity", {
-            layout: "main",
-            city,
-            signers: results.rows
-        });
-    });
+    db.viewByCity(city)
+        .then(results => {
+            // console.log("results from rows query   ", results.rows);
+            res.render("signersByCity", {
+                layout: "main",
+                city,
+                signers: results.rows
+            });
+        })
+        .catch(err => console.log("Error at the viewByCity query -->", err));
 });
 
 app.get("/", (req, res) => {
