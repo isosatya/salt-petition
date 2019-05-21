@@ -26,13 +26,16 @@
 
     var submit = $("#submit");
     submit.on("click", function(e) {
-        if (sign == 1) {
-            var signatureUrl = document.getElementById("canvas").toDataURL();
-            $("#signature").val(signatureUrl);
-        } else {
-            e.preventDefault();
-            $("#warning").text("Please include a signature");
-        }
+        var signatureUrl = document.getElementById("canvas").toDataURL();
+        $("#signature").val(signatureUrl);
+
+        // if (sign == 1) {
+        //     var signatureUrl = document.getElementById("canvas").toDataURL();
+        //     $("#signature").val(signatureUrl);
+        // } else {
+        //     e.preventDefault();
+        //     $("#warning").text("Please include a signature");
+        // }
         // e.preventDefault();
     });
 

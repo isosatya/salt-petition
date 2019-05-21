@@ -40,12 +40,23 @@ module.exports.updateUsers = function updateUsers(
 ) {
     return db.query(
         `
-        INSERT INTO users (id, first, last, email, password)
-        VALUES ($1, $2, $3, $4, $5)
-        ON CONFLICT (id)
-        DO UPDATE SET first = $2, last = $3, email = $4, password = $5;
+        UPDATE users SET first = $2, last = $3, email = $4, password = $5 WHERE id = $1
     `,
         [usersid, firstName, lastName, email, password]
+    );
+};
+
+module.exports.updateUsersNoPass = function updateUsersNoPass(
+    usersid,
+    firstName,
+    lastName,
+    email
+) {
+    return db.query(
+        `
+        UPDATE users SET first = $2, last = $3, email = $4 WHERE id = $1
+    `,
+        [usersid, firstName, lastName, email]
     );
 };
 

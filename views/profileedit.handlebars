@@ -20,6 +20,7 @@
 
     <input class="editprofile" name="homepage" id="homepage" type="text" value="{{this.homepage}}">Homepage</input>
     {{/profile}}
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
     <button type="submit" id="submitprofile" class="editprofile">Submit</button>
 

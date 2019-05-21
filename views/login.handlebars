@@ -4,6 +4,7 @@
 <form  action="/login" method="post">
     <input class="register" name="email" type="email" placeholder="email" value="{{email}}">
     <input class="register" name="password" type="password" placeholder="password">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <!-- keep button with type submit, or just empty -->
     <button type="submit">Log in</button>
 

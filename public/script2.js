@@ -14,7 +14,6 @@
             !(
                 homepage.startsWith("http://") ||
                 homepage.startsWith("https://") ||
-                homepage.startsWith("//") ||
                 homepage == ""
             )
         ) {
@@ -24,7 +23,7 @@
 
                 https://
                 http://
-                //`);
+                `);
         }
     });
 })();

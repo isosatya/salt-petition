@@ -7,6 +7,7 @@
     <input class="register" name="last" type="text" placeholder="i.e. Sakamoto" required>
     <input class="register" name="email" type="email" placeholder="i.e. you@mail.com" required>
     <input class="register" name="password" type="password" placeholder="password" required>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <!-- keep button with type submit, or just empty -->
     <button type="submit">Sign Up</button>
     <p>{{err}}</p>
