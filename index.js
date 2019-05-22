@@ -120,6 +120,8 @@ app.get("/register", requireUser, (req, res) => {
     });
 });
 
+console.log("heroku!");
+
 app.post("/register", (req, res) => {
     var firstName = req.body.first;
     var lastName = req.body.last;
