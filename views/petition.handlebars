@@ -1,25 +1,35 @@
 {{> nav }}
 
-<h1>THIS IS THE PETITION PAGE</h1>
-
-<form class="petition" action="/petition" method="post">
-
-    <!-- <input type="text" name="first" value="" class="field" placeholder="i.e. Otto" required>
-    <input type="text" name="last" value="" class="field" placeholder="i.e. Müller" required> -->
-    <input type="hidden" name="signature" value="" id="signature">
-
-    <!-- *** this is included to protect the inclusion of external malicious cookies *** -->
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
 
-    <button name="button" type="submit" id="submit">Submit</button>
-</form>
+<div id="bodypetition">
+    <h1>Confirm that you are cool by signing our Petition!</h1>
 
-<canvas id="canvas" width="600" height="150"></canvas>
+    <div id="petitionelements">
 
-<button name="refresh" type="button" id="refresh">Retry Signature</button>
+        <img src="/assets/pacino-before.jpg" id="pacinobefore">
 
-<p id="warning"></p>
+        <div id="canvasandbuttons">
+
+            <canvas id="canvas" height="200" width="600"></canvas>
+
+            <div id="buttonspetition">
+                <button name="refresh" type="button" id="refresh">Retry Signature</button>
+
+                <form class="petition" action="/petition" method="post">
+                    <input type="hidden" name="signature" value="" id="signature">
+                    <button name="button" type="submit" id="submitsignature">Submit</button>
+                    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

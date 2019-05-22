@@ -4,17 +4,16 @@
     var canvas = $("#canvas");
     var context = document.getElementById("canvas").getContext("2d");
     var doc = $(document);
-    var sign = 0;
 
     canvas.on("mousedown", function(e) {
         e.preventDefault();
         e.stopPropagation();
+        console.log(e);
 
         context.beginPath();
         context.moveTo(e.offsetX, e.offsetY);
 
         canvas.on("mousemove", function(e) {
-            sign = 1;
             context.lineTo(e.offsetX, e.offsetY);
             context.stroke();
         });
@@ -24,19 +23,11 @@
         canvas.off("mousemove");
     });
 
-    var submit = $("#submit");
-    submit.on("click", function(e) {
+    var submit = $("#submitsignature");
+    submit.on("click", function() {
         var signatureUrl = document.getElementById("canvas").toDataURL();
+        console.log("signatureURL", signatureUrl);
         $("#signature").val(signatureUrl);
-
-        // if (sign == 1) {
-        //     var signatureUrl = document.getElementById("canvas").toDataURL();
-        //     $("#signature").val(signatureUrl);
-        // } else {
-        //     e.preventDefault();
-        //     $("#warning").text("Please include a signature");
-        // }
-        // e.preventDefault();
     });
 
     var refresh = $("#refresh");

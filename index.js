@@ -1,4 +1,7 @@
 //////////////////////////////////////// CONSTANTS AND MIDDLEWARES ///////////////////////////////////////////////
+
+////////https://cool-petition.herokuapp.com/
+
 const express = require("express");
 const hb = require("express-handlebars");
 const bodyParser = require("body-parser");
@@ -9,6 +12,11 @@ exports.app = app;
 const bc = require("./utils/bc");
 var cookieSession = require("cookie-session");
 const csurf = require("csurf");
+const {
+    requireUser,
+    requireSignature,
+    requireNoCookies
+} = require("./routers/middleware");
 
 app.use(cookieParser());
 
@@ -106,14 +114,10 @@ app.post("/login", (req, res) => {
         });
 });
 
-app.get("/register", (req, res) => {
-    if (req.session.usersId) {
-        res.redirect("/petition");
-    } else {
-        res.render("register", {
-            layout: "main"
-        });
-    }
+app.get("/register", requireUser, (req, res) => {
+    res.render("register", {
+        layout: "main"
+    });
 });
 
 app.post("/register", (req, res) => {
@@ -146,14 +150,10 @@ app.post("/register", (req, res) => {
         });
 });
 
-app.get("/profile", (req, res) => {
-    if (req.session.usersId) {
-        res.render("profile", {
-            layout: "main"
-        });
-    } else {
-        res.redirect("/register");
-    }
+app.get("/profile", requireNoCookies, (req, res) => {
+    res.render("profile", {
+        layout: "main"
+    });
 });
 
 app.post("/profile", (req, res) => {
@@ -171,55 +171,38 @@ app.post("/profile", (req, res) => {
         });
 });
 
-app.get("/petition", (req, res) => {
-    if (req.session.usersId && req.session.signatureId) {
-        res.redirect("/petition/signed");
-    } else if (req.session.usersId) {
-        res.render("petition", {
-            layout: "main"
-        });
-    } else {
-        res.redirect("/register");
-    }
+app.get("/petition", requireNoCookies, requireSignature, (req, res) => {
+    res.render("petition", {
+        layout: "main"
+    });
 });
 
 app.post("/petition", (req, res) => {
-    if (req.session.usersId) {
-        var usersId = req.session.usersId;
-        var signatureUrl = req.body.signature;
-        db.addSignature(usersId, signatureUrl)
-            .then(() => {
-                req.session.signatureId = usersId;
-                res.redirect("/petition/signed");
-            })
-            .catch(err => {
-                console.log("Error at the addSignature query", err);
-            });
-    } else {
-        res.redirect("/register");
-    }
+    var usersId = req.session.usersId;
+    var signatureUrl = req.body.signature;
+
+    db.addSignature(usersId, signatureUrl)
+        .then(() => {
+            req.session.signatureId = usersId;
+            res.redirect("/petition/signed"); /////////////////////////////// ERROR
+        })
+        .catch(err => {
+            console.log("Error at the addSignature query", err);
+        });
 });
 
-app.get("/petition/signed", (req, res) => {
-    if (req.session.usersId && req.session.signatureId) {
-        db.viewSignature(req.session.signatureId)
-            .then(results => {
-                var imgUrl = results.rows[0].signature;
-                res.render("signed", {
-                    layout: "main",
-                    image: imgUrl
-                });
-            })
-            .catch(err => {
-                console.log("Error at the viewSignature query", err);
+app.get("/petition/signed", requireNoCookies, (req, res) => {
+    db.viewSignature(req.session.signatureId)
+        .then(results => {
+            var imgUrl = results.rows[0].signature;
+            res.render("signed", {
+                layout: "main",
+                image: imgUrl
             });
-    } else if (req.session.usersId) {
-        res.render("petition", {
-            layout: "main"
+        })
+        .catch(err => {
+            console.log("Error at the viewSignature query", err);
         });
-    } else {
-        res.redirect("/register");
-    }
 });
 
 app.post("/petition/signed", (req, res) => {
@@ -262,19 +245,17 @@ app.post("/petition/signed", (req, res) => {
     }
 });
 
-app.get("/profile/edit", (req, res) => {
-    if (req.session.usersId) {
-        db.editProfile(req.session.usersId)
-            .then(results => {
-                res.render("profileedit", {
-                    layout: "main",
-                    profile: results.rows
-                });
-            })
-            .catch(err => {
-                console.log("Error at editProfile query -->", err);
+app.get("/profile/edit", requireNoCookies, (req, res) => {
+    db.editProfile(req.session.usersId)
+        .then(results => {
+            res.render("profileedit", {
+                layout: "main",
+                profile: results.rows
             });
-    }
+        })
+        .catch(err => {
+            console.log("Error at editProfile query -->", err);
+        });
 });
 
 app.post("/profile/edit", (req, res) => {
@@ -332,34 +313,34 @@ app.post("/profile/edit", (req, res) => {
     }
 });
 
-app.get("/petition/signers", (req, res) => {
-    if (req.session.usersId) {
-        db.viewSigned()
-            .then(results => {
-                res.render("signers", {
-                    layout: "main",
-                    signers: results.rows
-                });
-            })
-            .catch(err => console.log("Error at viewSigned query -->", err));
-    }
+app.get("/petition/signers", requireNoCookies, (req, res) => {
+    db.viewSigned()
+        .then(results => {
+            res.render("signers", {
+                layout: "main",
+                signers: results.rows
+            });
+        })
+        .catch(err => console.log("Error at viewSigned query -->", err));
 });
 
-app.get("/petition/signers/:city", (req, res) => {
-    if (req.session.usersId) {
-        const city = req.params.city;
-        db.viewByCity(city)
-            .then(results => {
-                res.render("signersByCity", {
-                    layout: "main",
-                    city,
-                    signers: results.rows
-                });
-            })
-            .catch(err =>
-                console.log("Error at the viewByCity query -->", err)
-            );
+app.get("/petition/signers/:city", requireNoCookies, (req, res) => {
+    const city = req.params.city;
+    if (city == "Berlin") {
+        var photo = "berghain";
+    } else {
+        photo = "oktoberfest";
     }
+    db.viewByCity(city)
+        .then(results => {
+            res.render("signersByCity", {
+                layout: "main",
+                city,
+                photo,
+                signers: results.rows
+            });
+        })
+        .catch(err => console.log("Error at the viewByCity query -->", err));
 });
 
 if (require.main == module) {

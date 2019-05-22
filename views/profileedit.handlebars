@@ -1,32 +1,34 @@
 {{> nav }}
 
-<h4>Edit your profile</h4>
+<div id="bodyeditprofile">
+    <h4>Edit your cool profile</h4>
 
-<form  action="/profile/edit" method="post">
-    {{#profile}}
-    <input type="hidden" name="usersid" value="{{this.id}}">
+    <form  action="/profile/edit"  method="post">
 
-    <input class="editprofile" name="first" id="first" type="text" value="{{this.first}}">First Name</input>
+        {{#profile}}
+        <input class="editprofile" type="hidden" name="usersid" value="{{this.id}}">
 
-    <input class="editprofile" name="last" type="text" value="{{this.last}}">Last Name</input>
+        <input class="editprofile" name="first" id="first" type="text" value="{{this.first}}">First Name</input>
 
-    <input class="editprofile" name="email" type="email" value="{{this.email}}">e-mail</input>
+        <input class="editprofile" name="last" type="text" value="{{this.last}}">Last Name</input>
 
-    <input class="editprofile" name="password" type="password">Password</input>
+        <input class="editprofile" name="email" type="email" value="{{this.email}}">e-mail</input>
 
-    <input class="editprofile" name="age" id="age" type="number" value="{{this.age}}">Age</input>
+        <input class="editprofile" name="password" type="password">Password</input>
 
-    <input class="editprofile" name="city" type="text" value="{{this.city}}">City</input>
+        <input class="editprofile" name="age" id="age" type="number" value="{{this.age}}">Age</input>
 
-    <input class="editprofile" name="homepage" id="homepage" type="text" value="{{this.homepage}}">Homepage</input>
-    {{/profile}}
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <input class="editprofile" name="city" type="text" value="{{this.city}}">City</input>
 
-    <button type="submit" id="submitprofile" class="editprofile">Submit</button>
+        <input class="editprofile" name="homepage" id="homepage" type="text" value="{{this.homepage}}">Homepage</input>
+        {{/profile}}
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
+        <button type="submit" id="submitprofile" class="editprofile">Submit</button>
 
+    </form>
+</div>
 
-</form>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="/script2.js"></script>

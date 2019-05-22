@@ -1,17 +1,23 @@
 {{> nav }}
 
-<h1>Registration Form</h1>
 
-<form  action="/register" method="post">
+
+
+<form  action="/register" method="post" id="registerform">
+    <div id="about">
+        <h1>About Coolness...</h1>
+        <h2>This Petition is just for you to sign up if you consider yourself to be cool!</h2>
+    </div>
+<h3></h3>
     <input class="register" name="first" type="text" placeholder="i.e. Otto" required>
     <input class="register" name="last" type="text" placeholder="i.e. Sakamoto" required>
     <input class="register" name="email" type="email" placeholder="i.e. you@mail.com" required>
     <input class="register" name="password" type="password" placeholder="password" required>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <!-- keep button with type submit, or just empty -->
-    <button type="submit">Sign Up</button>
-    <p>{{err}}</p>
+    <button type="submit" id="submitregister">Sign Up</button>
+    <p class="errormessage">{{err}}</p>
 
-    <p>If you already are a member please <a href="/login">login</a></p>
+    <p id="loginlink">If you already are a cool member please <a href="/login">login</a></p>
 
 </form>

@@ -1,13 +1,18 @@
-<h1>Login Page</h1>
+{{> nav }}
 
 
-<form  action="/login" method="post">
-    <input class="register" name="email" type="email" placeholder="email" value="{{email}}">
-    <input class="register" name="password" type="password" placeholder="password">
+
+<div>
+    <h1 id="loginmessage">Login with your credentials if you have already been cool!</h1>
+</div>
+
+<form  action="/login" method="post" id="logindiv">
+    <input class="login" name="email" type="email" placeholder="email" value="{{email}}">
+    <input class="login" name="password" type="password" placeholder="password">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <!-- keep button with type submit, or just empty -->
-    <button type="submit">Log in</button>
-
-    <p>{{error}}</p>
+    <button type="submit" id="submitlogin">Log in</button>
 
 </form>
+
+<p class="errormessage" id="loginerror">{{error}}</p>

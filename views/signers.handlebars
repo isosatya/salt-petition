@@ -1,22 +1,24 @@
 {{> nav }}
 
-<h3>THIS IS THE SIGNERS PAGE</h3>
+<div class="bodysigners">
+    <img src="/assets/shining.jpg" id="frosted">
+    <div class="">
+        <h3>These are the cool peple so far!</h3>
+        <div class="signers">
+            <ol>
+                {{#signers}}
+                <li>
+                    {{#if homepage}}
+                        <a href="{{this.homepage}}">{{this.first}} {{this.last}}</a><a>, {{this.age}}</a><a href="/petition/signers/{{this.city}}">, {{this.city}}</a>
+                    {{else}}
+                        <a>{{this.first}} {{this.last}}</a><a>, {{this.age}}</a><a href="/petition/signers/{{this.city}}">, {{this.city}}</a>
+                    {{/if}}
+                </li>
+
+                {{/signers}}
+            </ol>
+        </div>
+    </div>
 
 
-
-<ol>
-    {{#signers}}
-    <li>
-        {{#if homepage}}
-            <a href="{{this.homepage}}">{{this.first}} {{this.last}}</a>
-        {{else}}
-            <a>{{this.first}} {{this.last}}</a>
-        {{/if}}
-    </li>
-
-        <a>{{this.age}}</a>
-
-        <a href="/petition/signers/{{this.city}}">{{this.city}}</a>
-
-    {{/signers}}
-</ol>
+</div>

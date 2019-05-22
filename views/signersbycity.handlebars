@@ -1,20 +1,32 @@
 {{> nav }}
 
-<h3>THIS IS THE SIGNERS PAGE</h3>
+<div id="citypicture">
+    <img src="/assets/{{photo}}.jpg">
+</div>
 
-<h2>These are the people who have signed up in the city of {{city}}</h2>
+<div id="bodysignersbycity">
 
-<ol>
-    {{#signers}}
-    <li>
-        {{#if homepage}}
-            <a href="{{this.homepage}}">{{this.first}} {{this.last}}</a>
-        {{else}}
-            <a>{{this.first}} {{this.last}}</a>
-        {{/if}}
-    </li>
+    <h2>These are the cool people who have signed up in the city of {{city}}</h2>
+    <div id="signersbycity">
+        <div class="signers">
+            <ol>
+                {{#signers}}
+                <li>
+                    {{#if homepage}}
+                        <a href="{{this.homepage}}">{{this.first}} {{this.last}}</a><a>, {{this.age}}</a>
+                    {{else}}
+                        <a>{{this.first}} {{this.last}}</a><a>, {{this.age}}</a>
+                    {{/if}}
+                </li>
 
-        <a>{{this.age}}</a>
+                {{/signers}}
+            </ol>
+        </div>
+        <form action="/petition/signers">
+            <input class="buttonsigned" type="submit" value="Go back">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        </form>
+    </div>
 
-    {{/signers}}
-</ol>
+
+</div>

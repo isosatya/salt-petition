@@ -1,10 +1,8 @@
-
-<h4>Pleae tell us more about yourself</h4>
-
-<form  action="/profile" method="post">
-    <input class="profile" name="age" id="age" type="number" placeholder="i.e. 33">
-    <input class="profile" name="city" type="text" placeholder="i.e. Hamburg">
-    <input class="profile" name="homepage" id="homepage" type="text" placeholder="url">
+<form  id="profileform" action="/profile" method="post">
+    <h4>Please tell us more about how cool you are!</h4>
+    <input class="profile" name="age" id="age" type="number" placeholder="Age?">
+    <input class="profile" name="city" type="text" placeholder="City?">
+    <input class="profile" name="homepage" id="homepage" type="text" placeholder="Homepage?">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
     <button type="submit" id="submitprofile">Submit</button>
