@@ -1,7 +1,7 @@
 {{> nav }}
 
 <div class="bodysigners">
-    <img src="/assets/shining.jpg" id="frosted">
+    <img src="/assets/strangerthings.jpg" id="frosted">
     <div class="">
         <h3>These are the cool peple so far!</h3>
         <div class="signers">
@@ -9,9 +9,11 @@
                 {{#signers}}
                 <li>
                     {{#if homepage}}
-                        <a href="{{this.homepage}}">{{this.first}} {{this.last}}</a><a>, {{this.age}}</a><a href="/petition/signers/{{this.city}}">, {{this.city}}</a>
+                    <a href="{{this.homepage}}">{{this.first}} {{this.last}}</a><a>, {{this.age}}</a><a
+                        href="/petition/signers/{{this.city}}">, {{this.city}}</a>
                     {{else}}
-                        <a>{{this.first}} {{this.last}}</a><a>, {{this.age}}</a><a href="/petition/signers/{{this.city}}">, {{this.city}}</a>
+                    <a>{{this.first}} {{this.last}}</a><a>, {{this.age}}</a><a href="/petition/signers/{{this.city}}">,
+                        {{this.city}}</a>
                     {{/if}}
                 </li>
 

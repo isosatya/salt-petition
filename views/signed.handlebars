@@ -3,27 +3,29 @@
 
 <div id="signedbody">
     <!-- <div id="imagejack"> -->
-    <img src="/assets/pacino-after.jpg" id="pacinoafter">
+    <img src="/assets/justsul2.png" id="pacinoafter">
     <!-- </div> -->
 
     <div id="menusigned">
-        <form  action="/petition/signed" method="post">
-            <button class="buttonsigned" name="delete" type="submit" id="deleteSign" value="true">Delete/Add new Signature</button>
+        <form action="/petition/signed" method="post">
+            <button class="buttonsigned" name="delete" type="submit" id="deleteSign" value="true">Delete/Add new
+                Signature</button>
             <input type="hidden" name="_csrf" value="{{csrfToken}}">
         </form>
         <form action="/profile/edit">
             <input class="buttonsigned" type="submit" value="Edit Profile" />
             <input type="hidden" name="_csrf" value="{{csrfToken}}">
         </form>
-        <form  action="/petition/signed" method="post">
-            <button class="buttonsigned" name="deleteaccount" type="submit" id="deleteaccount" value="true">Delete your account</button>
+        <form action="/petition/signed" method="post">
+            <button class="buttonsigned" name="deleteaccount" type="submit" id="deleteaccount" value="true">Delete your
+                account</button>
             <input type="hidden" name="_csrf" value="{{csrfToken}}">
         </form>
         <form action="/petition/signers">
             <input class="buttonsigned" type="submit" value="Other cool people!">
             <input type="hidden" name="_csrf" value="{{csrfToken}}">
         </form>
-        <form  action="/petition/signed" method="post">
+        <form action="/petition/signed" method="post">
             <button class="buttonsigned" name="logout" type="submit" id="refreshSign" value="true">Logout</button>
             <input type="hidden" name="_csrf" value="{{csrfToken}}">
         </form>
